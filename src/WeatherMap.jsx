@@ -11,6 +11,7 @@ import { SiEspressif } from "react-icons/si";
 const WeatherMap = () => {
   const [weather, setWeather] = useState(null);
   const [selectedStates, setSelectedStates] = useState(null);
+  const [forecast, setForcast] = useState(null);
   const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
   const fetchWeather = async (city) => {
@@ -20,15 +21,24 @@ const WeatherMap = () => {
         `https://api.openweathermap.org/data/2.5/weather?lat=${city.coordinates[0]}&lon=${city.coordinates[1]}&appid=${apiKey}&units=metric`,
       );
       const data = await res.json();
-      console.log("Weather data:", data);
+      console.log("weather Data", data);
       setWeather(data);
+
+      const forecastRes = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${city.coordinates[0]}&lon=${city.coordinates[1]}&appid=${apiKey}&units=metric`,
+      );
+      const forecastData = await forecastRes.json();
+      console.log("ForcasteData:", forecastData);
+      const dailyForecast = forecastData.list.filter(
+        (item) => item.dt_txt.includes("12:00:00"), // only keep the 12pm entry for each day
+      );
+      setForcast(dailyForecast);
+
+      //   console.log("Weather data:", data);
     } catch (err) {
-      console.error("There was an error fatching Weaher Data:", err);
+      console.error("Error fatching Weaher Data:", err);
     }
   };
-  useEffect(() => {
-    fetchWeather(nigeriaCities[2]);
-  }, []);
 
   return (
     <div className="">
@@ -90,7 +100,7 @@ const WeatherMap = () => {
             ))}
           </MapContainer>
         </div>
-        <div className="w-[30%] ">
+        <div className="w-[30%] overflow-y-auto">
           {weather ? (
             <div className="p-4">
               <h1 className="text-xl text-gray-200 font-semibold">
@@ -155,10 +165,49 @@ const WeatherMap = () => {
                   </h3>
                 </div>
               </div>
+              {/* 5 day forecast section */}
+              {forecast && (
+                <div className="mt-4 border-t border-gray-600 pt-3">
+                  <h3 className="text-gray-400 text-xs font-semibold uppercase mb-3">
+                    5 Day Forecast
+                  </h3>
+
+                  {forecast.map((day, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between py-2 border-b border-gray-700"
+                    >
+                      {/* day name — converts date to Mon, Tue etc */}
+                      <span className="text-gray-400 text-sm w-10">
+                        {index === 0
+                          ? "Today"
+                          : new Date(day.dt_txt).toLocaleDateString("en-US", {
+                              weekday: "short",
+                            })}
+                      </span>
+
+                      {/* weather icon for that day */}
+                      <img
+                        src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
+                        alt={day.weather[0].description}
+                        className="w-8 h-8"
+                      />
+
+                      {/* high and low temperature */}
+                      <span className="text-white text-sm font-semibold">
+                        {Math.round(day.main.temp_max)}°
+                        <span className="text-gray-500 font-normal ml-1">
+                          {Math.round(day.main.temp_min)}°
+                        </span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
-            <div>
-              <p className="text-gray-400 text-sm">
+            <div className="flex justify-center items-center h-[80%]">
+              <p className="text-gray-400 text-xl font-bold ">
                 Click any city marker to see its weather
               </p>
             </div>
