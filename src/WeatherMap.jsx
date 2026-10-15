@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import nigeriaCities from "../src/data/nigeriaCities";
 
 import { WiHumidity } from "react-icons/wi";
 import { FaCloudRain, FaSearch, FaWind } from "react-icons/fa";
 import { MdOutlineVisibility } from "react-icons/md";
 import { SiEspressif } from "react-icons/si";
+
+const weatherIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/128/1483/1483336.png",
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
+});
 
 const WeatherMap = () => {
   const [weather, setWeather] = useState(null);
@@ -90,6 +98,7 @@ const WeatherMap = () => {
             {nigeriaCities.map((city) => (
               <Marker
                 position={city.coordinates}
+                icon={weatherIcon}
                 eventHandlers={{
                   click: () => {
                     fetchWeather(city);
