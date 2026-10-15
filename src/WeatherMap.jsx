@@ -55,7 +55,7 @@ const WeatherMap = () => {
               </small>
             </div>
           </div>
-          <div className="relative w-[60%]">
+          <div className="relative w-[60%] hidden md:block">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
@@ -63,18 +63,20 @@ const WeatherMap = () => {
               className="w-full py-2 px-4 pl-10 rounded-lg border border-gray-500 bg-[#314e6e]"
             />
           </div>
-          <div className="flex items-center">
-            <div className="bg-[#a8b4c1] py-1 px-2 rounded">
-              <p>°C</p>
-            </div>
-            <div className="bg-[#314e6e] py-1 px-2 rounded">
-              <p>°F</p>
+          <div className="hidden lg:block">
+            <div className="flex items-center">
+              <div className="bg-[#a8b4c1] py-1 px-2 rounded">
+                <p>°C</p>
+              </div>
+              <div className="bg-[#314e6e] py-1 px-2 rounded">
+                <p>°F</p>
+              </div>
             </div>
           </div>
         </div>
       </header>
-      <div className="flex">
-        <div className="w-[70%]">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-[70%]">
           <MapContainer
             center={[9.082, 8.6753]}
             zoom={6}
@@ -100,7 +102,7 @@ const WeatherMap = () => {
             ))}
           </MapContainer>
         </div>
-        <div className="w-[30%] overflow-y-auto">
+        <div className="w-full md:w-[30%] overflow-y-auto">
           {weather ? (
             <div className="p-4">
               <h1 className="text-xl text-gray-200 font-semibold">
